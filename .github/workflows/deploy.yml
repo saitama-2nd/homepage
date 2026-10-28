@@ -1,0 +1,52 @@
+# サイトを自動でビルドして GitHub Pages に公開する設定。
+#
+# 動くタイミング：
+#   1. main ブランチに変更を push したとき（コードや画像を直したとき）
+#   2. 毎日 朝5時（日本時間）… スプレッドシートの変更を反映するため
+#   3. GitHub の「Actions」タブから手動で実行したとき（すぐ反映したいとき）
+#
+# 流れ：スプレッドシートから CSV を取り込む → サイトを作る → 公開する
+# 取り込みやビルドに失敗した場合は公開されず、前回のサイトがそのまま残る。
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 20 * * *' # UTC の 20:00 = 日本時間の朝 5:00
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # リポジトリの Settings > Secrets and variables > Actions > Variables に登録した URL
+      SHEET_PLAYERS_CSV_URL: ${{ vars.SHEET_PLAYERS_CSV_URL }}
+      SHEET_MATCHES_CSV_URL: ${{ vars.SHEET_MATCHES_CSV_URL }}
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v7
+      - name: Install, build, and upload your site
+        uses: withastro/action@v6
+        with:
+          build-cmd: npm run build:ci
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

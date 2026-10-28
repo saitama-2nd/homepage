@@ -1,0 +1,15 @@
+---
+// 下層ページ上部の見出し帯。
+interface Props {
+  en: string;
+  title: string;
+}
+const { en, title } = Astro.props;
+---
+
+<section class="page-hero">
+  <div class="container">
+    <small>{en}</small>
+    <h1>{title}</h1>
+  </div>
+</section>

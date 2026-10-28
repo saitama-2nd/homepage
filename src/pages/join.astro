@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ComingSoon from '../components/ComingSoon.astro';
+import { site } from '../site';
+---
+
+<BaseLayout title="入団・体験">
+  <PageHero en="JOIN US" title="入団・体験のご案内" />
+  <section class="section">
+    <div class="container">
+      <ComingSoon message="入団・体験の案内文（練習日・場所・費用など）は準備中です。" />
+      <div class="btn-row" style="margin-top: 28px; justify-content: center">
+        {
+          site.contactUrl ? (
+            <a class="btn btn-primary" href={site.contactUrl} target="_blank" rel="noopener noreferrer">
+              お問い合わせはこちら
+            </a>
+          ) : (
+            <span class="btn btn-primary" aria-disabled="true">お問い合わせ（準備中）</span>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

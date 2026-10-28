@@ -1,0 +1,44 @@
+---
+// 選手一覧。データは data/players.csv から読み込む。
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ComingSoon from '../components/ComingSoon.astro';
+import { loadPlayers } from '../lib/data';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const players = loadPlayers();
+const isSample = players.some((p) => p.name.includes('サンプル'));
+---
+
+<BaseLayout title="選手">
+  <PageHero en="PLAYERS" title="選手紹介" />
+  <section class="section">
+    <div class="container">
+      {
+        players.length === 0 ? (
+          <ComingSoon message="選手紹介は準備中です。" />
+        ) : (
+          <>
+            <div class="players">
+              {players.map((p) => (
+                <article class="player">
+                  <img
+                    src={p.photo ? `${base}/images/players/${p.photo}` : `${base}/images/player-placeholder.svg`}
+                    alt={p.name}
+                    loading="lazy"
+                  />
+                  {p.number && <span class="no">{p.number}</span>}
+                  <div class="info">
+                    <div class="name">{p.name}</div>
+                    <div class="pos">{p.position}</div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            {isSample && <p class="ai-note">※ 現在表示している選手はサンプルです。</p>}
+          </>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

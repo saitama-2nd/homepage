@@ -1,0 +1,101 @@
+---
+// トップページ。見た目の中心はここ。
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../site';
+import { loadMatches, formatDate, todayJst } from '../lib/data';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const matches = loadMatches();
+// 結果が未入力で、今日以降の最初の試合を「次の試合」にする
+const next = matches.find((m) => !m.played && m.date >= todayJst());
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <span class="hero-eyebrow">{site.league}</span>
+        <h1>SAITAMA<br /><em>2nd.</em></h1>
+        <p class="lead">{site.tagline}<br />一緒にプレーする仲間を探しています。</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href={`${base}/join/`}>入団・体験はこちら</a>
+          <a class="btn btn-ghost" href={`${base}/sponsor/`}>スポンサーをご検討の方へ</a>
+        </div>
+      </div>
+      <div class="hero-emblem">
+        <img src={`${base}/images/emblem.png`} alt="SAITAMA 2nd. エンブレム" width="320" height="320" />
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="チームの数字">
+    <div class="container stats-inner">
+      <div class="stat"><b>1部</b><span>所属リーグ</span></div>
+      <div class="stat"><b>20<small>人弱</small></b><span>在籍メンバー</span></div>
+      <div class="stat"><b>2<small>ユニ</small></b><span>1st 黄・紺 / 2nd 白・緑</span></div>
+    </div>
+  </section>
+
+  {
+    next && (
+      <section class="section">
+        <div class="container reveal">
+          <div class="section-title"><small>NEXT MATCH</small><h2>次の試合</h2></div>
+          <p class="sub">最新の情報は Instagram でもお知らせします。</p>
+          <ul class="match-list">
+            <li class="match">
+              <div class="date">{formatDate(next.date).md}<small>{formatDate(next.date).week}</small></div>
+              <div>
+                <div class="vs">vs {next.opponent}</div>
+                <div class="meta">{[next.competition, next.venue].filter(Boolean).join(' / ')}</div>
+              </div>
+              <div class="score"><small>KICK OFF</small>—</div>
+            </li>
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section alt">
+    <div class="container reveal">
+      <div class="section-title"><small>ABOUT US</small><h2>わたしたちについて</h2></div>
+      <p class="sub">
+        さいたま市南部支部1部リーグで戦う、社会人サッカーチームです。
+        （ここに、チームの紹介文が入ります。）
+      </p>
+      <div class="btn-row"><a class="btn btn-dark" href={`${base}/about/`}>チーム紹介を見る</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container reveal">
+      <div class="section-title"><small>JOIN / SUPPORT</small><h2>仲間とスポンサーを募集しています</h2></div>
+      <p class="sub">経験は問いません。まずは練習に参加してみませんか。</p>
+      <div class="cards">
+        <div class="card">
+          <span class="tag">PLAYER</span>
+          <h3>メンバー募集</h3>
+          <p>一緒にプレーしてくれる仲間を募集しています。体験参加も歓迎です。</p>
+          <a class="btn btn-dark" href={`${base}/join/`}>入団・体験について</a>
+        </div>
+        <div class="card">
+          <span class="tag">SPONSOR</span>
+          <h3>スポンサー募集</h3>
+          <p>チームの活動を応援してくださる企業・店舗・個人の方を募集しています。</p>
+          <a class="btn btn-dark" href={`${base}/sponsor/`}>スポンサーについて</a>
+        </div>
+        {
+          site.instagramUrl && (
+            <div class="card">
+              <span class="tag">NEWS</span>
+              <h3>最新情報は Instagram</h3>
+              <p>公式戦の日程や結果は Instagram で発信しています。</p>
+              <a class="btn btn-dark" href={site.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram を見る</a>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

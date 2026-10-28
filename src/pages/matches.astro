@@ -1,0 +1,61 @@
+---
+// 試合の日程・結果。data/matches.csv から読み込む。
+// 得点が入っていれば「結果」、空なら「日程」として自動で振り分ける。
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ComingSoon from '../components/ComingSoon.astro';
+import { loadMatches, formatDate, todayJst } from '../lib/data';
+
+const matches = loadMatches();
+// 日程：結果が未入力で、今日以降の試合（結果の入れ忘れで日付が過ぎたものは、ここには出さない）
+const upcoming = matches.filter((m) => !m.played && m.date >= todayJst());
+const isSample = matches.some((m) => m.opponent.includes('サンプル'));
+const results = matches.filter((m) => m.played).reverse(); // 新しい順
+const label = { win: 'WIN', lose: 'LOSE', draw: 'DRAW' } as const;
+---
+
+<BaseLayout title="試合">
+  <PageHero en="MATCHES" title="試合日程・結果" />
+  <section class="section">
+    <div class="container">
+      {
+        matches.length === 0 ? (
+          <ComingSoon message="試合の日程・結果は準備中です。" />
+        ) : (
+          <>
+            <div class="section-title"><small>SCHEDULE</small><h2>これからの試合</h2></div>
+            <ul class="match-list" style="margin-top: 20px">
+              {upcoming.length === 0 && <li class="meta">予定されている試合はありません。</li>}
+              {upcoming.map((m) => (
+                <li class="match">
+                  <div class="date">{formatDate(m.date).md}<small>{formatDate(m.date).week}</small></div>
+                  <div>
+                    <div class="vs">vs {m.opponent}</div>
+                    <div class="meta">{[m.competition, m.venue, m.note].filter(Boolean).join(' / ')}</div>
+                  </div>
+                  <div class="score"><small>UPCOMING</small>—</div>
+                </li>
+              ))}
+            </ul>
+
+            <div class="section-title" style="margin-top: 56px"><small>RESULTS</small><h2>試合結果</h2></div>
+            <ul class="match-list" style="margin-top: 20px">
+              {results.length === 0 && <li class="meta">まだ結果はありません。</li>}
+              {results.map((m) => (
+                <li class={`match ${m.result}`}>
+                  <div class="date">{formatDate(m.date).md}<small>{formatDate(m.date).week}</small></div>
+                  <div>
+                    <div class="vs">vs {m.opponent}</div>
+                    <div class="meta">{[m.competition, m.venue, m.note].filter(Boolean).join(' / ')}</div>
+                  </div>
+                  <div class="score"><small>{label[m.result!]}</small>{m.ourScore} - {m.theirScore}</div>
+                </li>
+              ))}
+            </ul>
+            {isSample && <p class="ai-note">※ 現在表示している試合はサンプルです。</p>}
+          </>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

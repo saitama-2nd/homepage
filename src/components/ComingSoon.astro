@@ -1,0 +1,12 @@
+---
+// 中身がまだ無いページに出す「準備中」表示。
+interface Props {
+  message?: string;
+}
+const { message = 'このページは準備中です。もうしばらくお待ちください。' } = Astro.props;
+---
+
+<div class="coming">
+  <b>COMING SOON</b>
+  <p>{message}</p>
+</div>
