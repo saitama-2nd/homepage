@@ -18,4 +18,8 @@ if (repository) {
   base = repo.toLowerCase() === `${owner.toLowerCase()}.github.io` ? '/' : `/${repo}`;
 }
 
-export default defineConfig({ site, base });
+export default defineConfig({
+  site,
+  base,
+  devToolbar: { enabled: false },
+});

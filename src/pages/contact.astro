@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { site } from '../site';
+
+const hasContactEmail = site.contactEmail.trim().length > 0;
+---
+
+<BaseLayout title="お問い合わせ">
+  <PageHero en="CONTACT" title="お問い合わせ" />
+  <section class="section">
+    <div class="container contact-container">
+      <p class="contact-intro">
+        入団・体験、スポンサー、その他のお問い合わせはこちらからお送りください。内容を確認のうえ、担当者よりご連絡します。
+      </p>
+      {
+        hasContactEmail ? (
+          <>
+            <p class="contact-error" id="contact-error" role="alert" hidden>
+              送信に失敗しました。通信環境を確認して、もう一度お試しください。
+            </p>
+            <form class="contact-form" action={`https://formsubmit.co/ajax/${site.contactEmail}`} method="POST">
+            <input type="hidden" name="_subject" value="ホームページからのお問い合わせ" />
+            <input type="text" name="_honey" tabindex="-1" autocomplete="off" hidden />
+
+            <label class="form-field">
+              <span>お問い合わせの種類 <b>必須</b></span>
+              <select name="お問い合わせの種類" id="contact-type" required>
+                <option value="">選択してください</option>
+                <option value="入団・体験">入団・体験</option>
+                <option value="スポンサー">スポンサー</option>
+                <option value="その他">その他</option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span>お名前 <b>必須</b></span>
+              <input type="text" name="お名前" autocomplete="name" required />
+            </label>
+
+            <label class="form-field">
+              <span>返信先メールアドレス <b>必須</b></span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+
+            <label class="form-field">
+              <span>お問い合わせ内容 <b>必須</b></span>
+              <textarea name="お問い合わせ内容" id="contact-message" rows="10" required></textarea>
+            </label>
+
+            <div class="contact-form-actions">
+              <button class="btn btn-dark" id="contact-template" type="button">ひな形を用意する</button>
+              <button class="btn btn-clear" id="contact-clear" type="button">クリア</button>
+            </div>
+            <p class="contact-privacy">
+              ご入力いただいた内容は、お問い合わせへの返信にのみ使用します。送信内容はメールフォームサービスを経由して届けられます。
+            </p>
+            <button class="btn btn-primary contact-submit" type="submit">内容を送信する</button>
+            </form>
+          </>
+        ) : (
+          <p class="contact-unavailable" role="status">
+            お問い合わせフォームは現在準備中です。運営者の方は <code>src/site.ts</code> に受信先メールアドレスを設定してください。
+          </p>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+{
+  hasContactEmail && (
+    <script>
+      const typeSelect = document.querySelector<HTMLSelectElement>('#contact-type');
+      const message = document.querySelector<HTMLTextAreaElement>('#contact-message');
+      const templateButton = document.querySelector<HTMLButtonElement>('#contact-template');
+      const clearButton = document.querySelector<HTMLButtonElement>('#contact-clear');
+      const form = document.querySelector<HTMLFormElement>('.contact-form');
+      const submitButton = form?.querySelector<HTMLButtonElement>('[type="submit"]');
+      const errorMessage = document.querySelector<HTMLParagraphElement>('#contact-error');
+      const templates: Record<string, string> = {
+        '入団・体験': '入団・体験について問い合わせします。\n\nご希望の内容（入団／体験参加）：\nご希望の時期：\nサッカー経験・ポジションなど（任意）：\nご質問・ご相談：',
+        スポンサー: 'スポンサーについて問い合わせします。\n\n会社名・団体名（任意）：\nご検討いただいている内容：\nご質問・ご相談：',
+        その他: 'お問い合わせ内容：\n\n',
+      };
+
+      if (typeSelect && message && templateButton && clearButton && form && submitButton && errorMessage) {
+        const requestedType = new URLSearchParams(window.location.search).get('type');
+        if (requestedType === 'join') typeSelect.value = '入団・体験';
+        if (requestedType === 'sponsor') typeSelect.value = 'スポンサー';
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          if (!window.confirm('入力内容を送信します。よろしいですか？')) return;
+
+          submitButton.disabled = true;
+          submitButton.textContent = '送信中…';
+          errorMessage.hidden = true;
+          try {
+            const response = await fetch(form.action, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              },
+              body: JSON.stringify(Object.fromEntries(new FormData(form))),
+            });
+            const result: unknown = await response.json();
+            if (!response.ok || typeof result !== 'object' || result === null || !('success' in result)) {
+              throw new Error('FormSubmit returned an unsuccessful response.');
+            }
+
+            const responseData = result as { success: boolean | string; message?: string };
+            if (responseData.success !== true && responseData.success !== 'true') {
+              throw new Error(responseData.message ?? 'FormSubmit did not accept the submission.');
+            }
+
+            const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+            window.location.assign(`${base}/contact/thanks/`);
+          } catch (error) {
+            console.error('Contact form submission failed.', error);
+            errorMessage.hidden = false;
+            submitButton.disabled = false;
+            submitButton.textContent = '内容を送信する';
+          }
+        });
+
+        templateButton.addEventListener('click', () => {
+          message.value = templates[typeSelect.value] ?? '';
+          message.focus();
+        });
+        clearButton.addEventListener('click', () => {
+          message.value = '';
+          message.focus();
+        });
+      }
+    </script>
+  )
+}
