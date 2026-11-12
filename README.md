@@ -22,7 +22,7 @@ npm run dev     # 開発用サーバーを起動
 
 | 場所 | 役割 |
 |---|---|
-| `src/site.ts` | チーム名、メニュー、Instagram・問い合わせフォームの URL など。**まずここを見る** |
+| `src/site.ts` | チーム名、メニュー、Instagram、問い合わせ受信先など。**まずここを見る** |
 | `src/pages/` | 各ページ（1ファイル＝1ページ） |
 | `src/components/` | ヘッダー・フッターなどの部品 |
 | `src/styles/global.css` | 色とデザイン。一番上の `--navy` `--yellow` などを変えると全体の配色が変わる |
@@ -34,7 +34,7 @@ npm run dev     # 開発用サーバーを起動
 
 ## よく使う作業
 
-- **Instagram・問い合わせ先を設定**：`src/site.ts` の `instagramUrl` `contactUrl` `sponsorContactUrl` に URL を入れる
+- **Instagram・問い合わせ先を設定**：`src/site.ts` の `instagramUrl` と `contactEmail` を設定する
 - **エンブレムを差し替え**：`public/images/emblem.png` を同じ名前で上書き（正方形で 600px 以上がおすすめ）
 - **選手を追加・編集・削除**：`data/players.csv` を編集。「表示」を × にすると、行を消さずに非表示にできる
 - **選手の写真**：`public/images/players/` に画像を入れ、CSV の「写真」列にファイル名だけ書く。空欄なら代替画像
@@ -53,4 +53,4 @@ npm run dev     # 開発用サーバーを起動
 ## このあとの予定
 
 - チーム紹介・入団案内・スポンサー案内の文章
-- 問い合わせ先（Google フォーム等）と Instagram の URL の設定
+- 問い合わせフォームの受信先メールアドレスを設定（手順は `docs/運用ガイド.md`）

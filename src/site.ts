@@ -5,9 +5,8 @@ export const site = {
   league: 'さいたま市南部支部 1部リーグ所属',
   tagline: '仕事のあとも、本気で蹴る。',
   instagramUrl: '', // 例: 'https://www.instagram.com/チームのID/'
-  // 問い合わせ先（Googleフォーム / LINE など）。決まったらここに URL を入れるだけ。
-  contactUrl: '',
-  sponsorContactUrl: '',
+  // 問い合わせを受信するメールアドレス。設定後、FormSubmit.co の初回確認が必要。
+  contactEmail: '',
 };
 
 // ナビゲーション。ページを増やしたらここに足す。
@@ -18,4 +17,5 @@ export const nav = [
   { label: '試合', href: 'matches' },
   { label: '入団・体験', href: 'join' },
   { label: 'スポンサー', href: 'sponsor' },
+  { label: 'お問い合わせ', href: 'contact' },
 ];
