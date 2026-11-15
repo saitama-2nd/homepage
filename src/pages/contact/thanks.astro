@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="送信完了">
+  <PageHero en="THANK YOU" title="送信完了" />
+  <section class="section">
+    <div class="container contact-container">
+      <div class="contact-thanks">
+        <h2>お問い合わせを送信しました</h2>
+        <p>ご連絡いただきありがとうございます。内容を確認のうえ、担当者よりご連絡します。</p>
+        <a class="btn btn-primary" href={`${base}/`}>トップページへ戻る</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
