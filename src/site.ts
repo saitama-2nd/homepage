@@ -3,7 +3,7 @@ export const site = {
   teamName: 'SAITAMA 2nd.',
   teamNameJa: 'さいたま セカンド',
   league: 'さいたま市南部支部 1部リーグ所属',
-  tagline: '仕事のあとも、本気で蹴る。',
+  tagline: '仕事と両立しながら、サッカーに真剣に取り組む。',
   instagramUrl: '', // 例: 'https://www.instagram.com/チームのID/'
   // 問い合わせを受信するメールアドレス。設定後、FormSubmit.co の初回確認が必要。
   contactEmail: 'mikihito.hakuta@gmail.com',
