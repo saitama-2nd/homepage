@@ -12,6 +12,11 @@ const upcoming = matches.filter((m) => !m.played && m.date >= todayJst());
 const isSample = matches.some((m) => m.opponent.includes('サンプル'));
 const results = matches.filter((m) => m.played).reverse(); // 新しい順
 const label = { win: 'WIN', lose: 'LOSE', draw: 'DRAW' } as const;
+const scoreText = (m: (typeof matches)[number]) => {
+  if (typeof m.ourScore === 'string') return m.ourScore;
+  if (typeof m.theirScore === 'string') return m.theirScore;
+  return `${m.ourScore} - ${m.theirScore}`;
+};
 ---
 
 <BaseLayout title="試合">
@@ -48,7 +53,7 @@ const label = { win: 'WIN', lose: 'LOSE', draw: 'DRAW' } as const;
                     <div class="vs">vs {m.opponent}</div>
                     <div class="meta">{[m.competition, m.venue, m.note].filter(Boolean).join(' / ')}</div>
                   </div>
-                  <div class="score"><small>{label[m.result!]}</small>{m.ourScore} - {m.theirScore}</div>
+                  <div class="score"><small>{label[m.result!]}</small>{scoreText(m)}</div>
                 </li>
               ))}
             </ul>

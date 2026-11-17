@@ -13,13 +13,16 @@ export interface Player {
   photo: string; // 画像ファイル名（public/images/players/ に置く）。空欄なら代替画像
 }
 
+export type ForfeitResult = '不戦勝' | '不戦敗';
+export type MatchScore = number | ForfeitResult | null;
+
 export interface Match {
   date: string; // YYYY-MM-DD
   opponent: string;
   venue: string;
   competition: string;
-  ourScore: number | null;
-  theirScore: number | null;
+  ourScore: MatchScore;
+  theirScore: MatchScore;
   note: string;
   played: boolean; // 結果が入っていれば true
   result: 'win' | 'lose' | 'draw' | null;
@@ -61,23 +64,50 @@ export function loadMatches(): Match[] {
         fail('試合', line, `「日付」は 2026-11-03 の形で入力してください（現在: "${r['日付'] ?? ''}"）`);
       }
       if (!r['対戦相手']) fail('試合', line, '「対戦相手」が空です');
-      const our = r['自チーム得点'] === '' || r['自チーム得点'] === undefined ? null : Number(r['自チーム得点']);
-      const their = r['相手得点'] === '' || r['相手得点'] === undefined ? null : Number(r['相手得点']);
-      if ((our === null) !== (their === null)) fail('試合', line, '得点は「自チーム」「相手」の両方を入力してください');
-      if ((our !== null && Number.isNaN(our)) || (their !== null && Number.isNaN(their))) {
-        fail('試合', line, '得点は数字で入力してください');
+      const ourValue = r['自チーム得点'] ?? '';
+      const theirValue = r['相手得点'] ?? '';
+      const forfeit = [ourValue, theirValue].find(
+        (score): score is ForfeitResult => score === '不戦勝' || score === '不戦敗',
+      );
+      let ourScore: MatchScore = null;
+      let theirScore: MatchScore = null;
+      let played = false;
+      let result: Match['result'] = null;
+
+      if (forfeit) {
+        if (ourValue !== '' && theirValue !== '') {
+          fail('試合', line, '「不戦勝」「不戦敗」を入力する場合、もう一方の得点欄は空欄にしてください');
+        }
+        ourScore = ourValue === forfeit ? forfeit : null;
+        theirScore = theirValue === forfeit ? forfeit : null;
+        played = true;
+        result = forfeit === '不戦勝' ? 'win' : 'lose';
+      } else {
+        const our = ourValue === '' ? null : Number(ourValue);
+        const their = theirValue === '' ? null : Number(theirValue);
+        if ((our === null) !== (their === null)) {
+          fail('試合', line, '得点は「自チーム」「相手」の両方を入力してください');
+        }
+        if ((our !== null && Number.isNaN(our)) || (their !== null && Number.isNaN(their))) {
+          fail('試合', line, '得点は数字、または「不戦勝」「不戦敗」で入力してください');
+        }
+        ourScore = our;
+        theirScore = their;
+        if (our !== null && their !== null) {
+          played = true;
+          result = our > their ? 'win' : our < their ? 'lose' : 'draw';
+        }
       }
-      const played = our !== null && their !== null;
       return {
         date: r['日付'],
         opponent: r['対戦相手'],
         venue: r['会場'] ?? '',
         competition: r['大会名'] ?? '',
-        ourScore: our,
-        theirScore: their,
+        ourScore,
+        theirScore,
         note: r['メモ'] ?? '',
         played,
-        result: played ? (our! > their! ? 'win' : our! < their! ? 'lose' : 'draw') : null,
+        result,
       } satisfies Match;
     })
     .sort((a, b) => a.date.localeCompare(b.date));
