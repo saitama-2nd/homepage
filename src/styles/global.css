@@ -42,7 +42,10 @@ a { color: inherit; }
 .brand img { width: 40px; height: 40px; border-radius: 50%; background: var(--white); }
 .brand span { font-family: var(--font-head); font-size: 1.25rem; letter-spacing: .06em; }
 
-.site-nav { position: static; }
+.site-nav { position: static; display: flex; align-items: center; gap: 12px; }
+.instagram-link { display: inline-flex; flex: 0 0 auto; border-radius: 8px; }
+.instagram-link img { width: 32px; height: 32px; }
+.instagram-link:focus-visible { outline: 2px solid var(--yellow); outline-offset: 3px; }
 .nav-button {
   display: none; cursor: pointer; width: 44px; height: 44px;
   align-items: center; justify-content: center; color: var(--white); font-size: 1.5rem;
@@ -259,6 +262,7 @@ a { color: inherit; }
 .footer-brand { display: flex; align-items: center; gap: 12px; color: var(--white); }
 .footer-brand img { width: 48px; height: 48px; border-radius: 50%; background: var(--white); }
 .footer-brand b { font-family: var(--font-head); letter-spacing: .06em; font-size: 1.2rem; }
+.site-footer .instagram-link img { width: 36px; height: 36px; }
 .site-footer small { display: block; margin-top: 24px; text-align: center; font-size: .75rem; }
 .site-footer a { color: var(--yellow); }
 

@@ -16,8 +16,14 @@ const year = new Date().getFullYear();
       </div>
       {
         site.instagramUrl && (
-          <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer">
-            Instagram →
+          <a
+            class="instagram-link"
+            href={site.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram公式アカウントを開く"
+          >
+            <img src={`${base}/images/instagram.svg`} alt="" width="36" height="36" />
           </a>
         )
       }

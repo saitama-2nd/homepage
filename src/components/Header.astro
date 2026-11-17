@@ -32,6 +32,19 @@ const current = Astro.url.pathname.replace(base, '').replace(/^\/|\/$/g, '');
           }
         </ul>
       </nav>
+      {
+        site.instagramUrl && (
+          <a
+            class="instagram-link"
+            href={site.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram公式アカウントを開く"
+          >
+            <img src={`${base}/images/instagram.svg`} alt="" width="32" height="32" />
+          </a>
+        )
+      }
     </div>
   </div>
 </header>
