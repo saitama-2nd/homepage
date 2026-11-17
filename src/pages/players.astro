@@ -10,7 +10,10 @@ const players = loadPlayers();
 const isSample = players.some((p) => p.name.includes('サンプル'));
 ---
 
-<BaseLayout title="選手">
+<BaseLayout
+  title="選手"
+  description="埼玉県のさいたま市南部支部1部リーグで活動する社会人サッカーチーム、Saitama 2nd.の選手を紹介します。"
+>
   <PageHero en="PLAYERS" title="選手紹介" />
   <section class="section">
     <div class="container">

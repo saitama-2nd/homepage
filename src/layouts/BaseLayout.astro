@@ -9,7 +9,10 @@ interface Props {
   title?: string;
   description?: string;
 }
-const { title, description = `${site.teamName}｜${site.league}の社会人サッカーチーム` } = Astro.props;
+const {
+  title,
+  description = `埼玉県の${site.league}に所属し、毎週日曜日に活動する${site.teamName}。入団・練習体験の仲間を募集している社会人サッカーチームです。`,
+} = Astro.props;
 const pageTitle = title ? `${title}｜${site.teamName}` : `${site.teamName}｜${site.league}`;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
