@@ -1,7 +1,6 @@
 // サイト全体の設定。チーム名・リンク先など「後で変えそうなもの」はここに集める。
 export const site = {
-  teamName: 'SAITAMA 2nd.',
-  teamNameJa: 'さいたま セカンド',
+  teamName: 'Saitama 2nd.',
   league: 'さいたま市南部支部 1部リーグ所属',
   tagline: '仕事と両立しながら、サッカーに真剣に取り組む。',
   instagramUrl: '', // 例: 'https://www.instagram.com/チームのID/'
