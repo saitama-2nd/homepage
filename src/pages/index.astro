@@ -8,9 +8,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const matches = loadMatches();
 // 結果が未入力で、今日以降の最初の試合を「次の試合」にする
 const next = matches.find((m) => !m.played && m.date >= todayJst());
+const websiteUrl = Astro.site ? new URL(import.meta.env.BASE_URL, Astro.site).href : undefined;
+const websiteStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: site.teamName,
+  url: websiteUrl,
+};
 ---
 
 <BaseLayout>
+  <script type="application/ld+json" set:html={JSON.stringify(websiteStructuredData)} />
   <section class="hero">
     <div class="container hero-inner">
       <div>
