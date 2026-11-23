@@ -5,6 +5,7 @@
 //       → site: https://taro.github.io  base: /saitama2nd-hp
 // 手元（npm run dev）では、下の「ローカル用」の値が使われる。
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
 const repository = process.env.GITHUB_REPOSITORY; // 例: "taro/saitama2nd-hp"（GitHub 上でだけ入っている）
 
@@ -21,5 +22,6 @@ if (repository) {
 export default defineConfig({
   site,
   base,
+  integrations: [sitemap()],
   devToolbar: { enabled: false },
 });
