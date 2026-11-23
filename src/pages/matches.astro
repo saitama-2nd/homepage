@@ -3,8 +3,8 @@
 // 得点が入っていれば「結果」、空なら「日程」として自動で振り分ける。
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import ComingSoon from '../components/ComingSoon.astro';
 import { loadMatches, formatDate, todayJst } from '../lib/data';
+import { site } from '../site';
 
 const matches = loadMatches();
 // 日程：結果が未入力で、今日以降の試合（結果の入れ忘れで日付が過ぎたものは、ここには出さない）
@@ -40,7 +40,15 @@ const scoreDetail = (m: (typeof matches)[number]) => {
     <div class="container">
       {
         matches.length === 0 ? (
-          <ComingSoon message="試合の日程・結果は準備中です。" />
+          <div class="card">
+            <h2>試合日程は決まり次第掲載します</h2>
+            <p>現在掲載できる試合情報はありません。チームの活動についてはInstagramでもご覧いただけます。</p>
+            {site.instagramUrl && (
+              <a class="btn btn-dark" href={site.instagramUrl} target="_blank" rel="noopener noreferrer">
+                Instagramを見る
+              </a>
+            )}
+          </div>
         ) : (
           <>
             <div class="section-title"><small>SCHEDULE</small><h2>これからの試合</h2></div>

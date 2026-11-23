@@ -50,7 +50,3 @@ npm run dev     # 開発用サーバーを起動
 - 取り込み：`scripts/fetch-sheets.mjs` が、公開した CSV を `data/` に保存する
 - `site` / `base` は、GitHub 上では自動で決まる（`astro.config.mjs`）
 
-## このあとの予定
-
-- チーム紹介・入団案内・スポンサー案内の文章
-- 問い合わせフォームの受信先メールアドレスを設定（手順は `docs/運用ガイド.md`）

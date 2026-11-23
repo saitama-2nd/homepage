@@ -73,7 +73,13 @@ const hasContactEmail = site.contactEmail.trim().length > 0;
           </>
         ) : (
           <p class="contact-unavailable" role="status">
-            お問い合わせフォームは現在準備中です。運営者の方は <code>src/site.ts</code> に受信先メールアドレスを設定してください。
+            お問い合わせフォームは現在ご利用いただけません。Instagramのダイレクトメッセージからお問い合わせください。
+            {site.instagramUrl && (
+              <>
+                {' '}
+                <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram公式アカウント</a>
+              </>
+            )}
           </p>
         )
       }

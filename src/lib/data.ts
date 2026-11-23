@@ -169,9 +169,9 @@ export function loadMatches(): Match[] {
             fail('試合', line, '延長戦が決着をつけた場合は、90分の得点は同点にしてください');
           }
 
-          if (penaltyOurScore !== null) {
+          if (penaltyOurScore !== null && penaltyTheirScore !== null) {
             result = penaltyOurScore > penaltyTheirScore ? 'win' : 'lose';
-          } else if (extraTimeOurScore !== null) {
+          } else if (extraTimeOurScore !== null && extraTimeTheirScore !== null) {
             result = extraTimeOurScore > extraTimeTheirScore ? 'win' : 'lose';
           } else {
             result = our > their ? 'win' : our < their ? 'lose' : 'draw';

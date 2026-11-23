@@ -167,13 +167,6 @@ a { color: inherit; }
 .page-hero small { display: block; font-family: var(--font-head); letter-spacing: .25em; color: var(--yellow); }
 .page-hero h1 { margin: 4px 0 0; font-size: clamp(1.7rem, 6vw, 2.6rem); line-height: 1.25; }
 
-/* ---------- 準備中 ---------- */
-.coming {
-  text-align: center; padding: 64px 20px; border: 2px dashed var(--line); border-radius: var(--radius);
-  background: var(--white); color: var(--muted);
-}
-.coming b { display: block; font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .15em; color: var(--navy); }
-
 /* ---------- 選手カード ---------- */
 .players { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
 .player {

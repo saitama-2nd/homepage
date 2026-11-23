@@ -2,12 +2,15 @@
 // 選手一覧。データは data/players.csv から読み込む。
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import ComingSoon from '../components/ComingSoon.astro';
 import { loadPlayers } from '../lib/data';
+import { site } from '../site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const players = loadPlayers();
-const isSample = players.some((p) => p.name.includes('サンプル'));
+const allPlayers = loadPlayers();
+const isSample = allPlayers.some((p) => p.name.includes('サンプル'));
+const players = import.meta.env.DEV
+  ? allPlayers
+  : allPlayers.filter((p) => !p.name.includes('サンプル'));
 ---
 
 <BaseLayout
@@ -19,7 +22,16 @@ const isSample = players.some((p) => p.name.includes('サンプル'));
     <div class="container">
       {
         players.length === 0 ? (
-          <ComingSoon message="選手紹介は準備中です。" />
+          <>
+            <div class="section-title"><small>TEAM</small><h2>20人弱で活動中</h2></div>
+            <p class="sub">
+              {site.teamName}は、さいたま市南部支部1部リーグで活動する社会人サッカーチームです。
+              選手個人のプロフィールは掲載していませんが、新しいメンバーを募集しています。
+            </p>
+            <div class="btn-row">
+              <a class="btn btn-primary" href={`${base}/join/`}>入団・体験について</a>
+            </div>
+          </>
         ) : (
           <>
             <div class="players">
@@ -38,7 +50,7 @@ const isSample = players.some((p) => p.name.includes('サンプル'));
                 </article>
               ))}
             </div>
-            {isSample && <p class="ai-note">※ 現在表示している選手はサンプルです。</p>}
+            {import.meta.env.DEV && isSample && <p class="ai-note">※ これは開発用のサンプル選手です。本番サイトには表示されません。</p>}
           </>
         )
       }

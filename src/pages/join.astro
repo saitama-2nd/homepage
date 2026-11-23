@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import ComingSoon from '../components/ComingSoon.astro';
+import { site } from '../site';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
@@ -12,8 +12,29 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <PageHero en="JOIN US" title="入団・体験のご案内" />
   <section class="section">
     <div class="container">
-      <ComingSoon message="入団・体験の案内文（練習日・場所・費用など）は準備中です。" />
-      <div class="btn-row" style="margin-top: 28px; justify-content: center">
+      <div class="section-title"><small>WELCOME</small><h2>一緒にプレーする仲間を募集しています</h2></div>
+      <p class="sub">
+        {site.teamName}は、さいたま市南部支部1部リーグで活動する社会人サッカーチームです。
+        毎週日曜日に活動しています。まずは練習に参加して、チームの雰囲気を体験してみませんか。
+      </p>
+      <div class="cards">
+        <div class="card">
+          <span class="tag">01 / CONTACT</span>
+          <h3>体験参加を相談</h3>
+          <p>お問い合わせフォームから、参加希望日やサッカー経験・ポジションをお知らせください。</p>
+        </div>
+        <div class="card">
+          <span class="tag">02 / DETAILS</span>
+          <h3>活動内容を確認</h3>
+          <p>活動場所・集合時間・持ち物は参加日程に合わせてご案内します。気になることは事前にお問い合わせください。</p>
+        </div>
+        <div class="card">
+          <span class="tag">03 / TRY</span>
+          <h3>練習に体験参加</h3>
+          <p>案内された内容をご確認のうえ、練習にご参加ください。参加後に入団を検討いただけます。</p>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top: 28px">
         <a class="btn btn-primary" href={`${base}/contact/?type=join`}>入団・体験について問い合わせる</a>
       </div>
     </div>
