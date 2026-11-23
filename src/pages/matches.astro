@@ -15,7 +15,19 @@ const label = { win: 'WIN', lose: 'LOSE', draw: 'DRAW' } as const;
 const scoreText = (m: (typeof matches)[number]) => {
   if (typeof m.ourScore === 'string') return m.ourScore;
   if (typeof m.theirScore === 'string') return m.theirScore;
+  if (m.extraTimeOurScore !== null && m.extraTimeTheirScore !== null) {
+    return `${m.extraTimeOurScore} - ${m.extraTimeTheirScore}`;
+  }
   return `${m.ourScore} - ${m.theirScore}`;
+};
+const scoreDetail = (m: (typeof matches)[number]) => {
+  if (m.penaltyOurScore !== null && m.penaltyTheirScore !== null) {
+    return `PK ${m.penaltyOurScore}-${m.penaltyTheirScore}`;
+  }
+  if (m.extraTimeOurScore !== null && m.extraTimeTheirScore !== null) {
+    return `延長後（90分 ${m.ourScore}-${m.theirScore}）`;
+  }
+  return '';
 };
 ---
 
@@ -56,7 +68,11 @@ const scoreText = (m: (typeof matches)[number]) => {
                     <div class="vs">vs {m.opponent}</div>
                     <div class="meta">{[m.competition, m.venue, m.note].filter(Boolean).join(' / ')}</div>
                   </div>
-                  <div class="score"><small>{label[m.result!]}</small>{scoreText(m)}</div>
+                  <div class="score">
+                    <small>{label[m.result!]}</small>
+                    {scoreText(m)}
+                    {scoreDetail(m) && <small class="score-detail">{scoreDetail(m)}</small>}
+                  </div>
                 </li>
               ))}
             </ul>

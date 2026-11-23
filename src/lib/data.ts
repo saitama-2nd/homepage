@@ -23,6 +23,10 @@ export interface Match {
   competition: string;
   ourScore: MatchScore;
   theirScore: MatchScore;
+  extraTimeOurScore: number | null;
+  extraTimeTheirScore: number | null;
+  penaltyOurScore: number | null;
+  penaltyTheirScore: number | null;
   note: string;
   played: boolean; // 結果が入っていれば true
   result: 'win' | 'lose' | 'draw' | null;
@@ -66,17 +70,28 @@ export function loadMatches(): Match[] {
       if (!r['対戦相手']) fail('試合', line, '「対戦相手」が空です');
       const ourValue = r['自チーム得点'] ?? '';
       const theirValue = r['相手得点'] ?? '';
+      const extraOurValue = r['延長後自チーム得点'] ?? '';
+      const extraTheirValue = r['延長後相手得点'] ?? '';
+      const penaltyOurValue = r['PK自チーム得点'] ?? '';
+      const penaltyTheirValue = r['PK相手得点'] ?? '';
       const forfeit = [ourValue, theirValue].find(
         (score): score is ForfeitResult => score === '不戦勝' || score === '不戦敗',
       );
       let ourScore: MatchScore = null;
       let theirScore: MatchScore = null;
+      let extraTimeOurScore: number | null = null;
+      let extraTimeTheirScore: number | null = null;
+      let penaltyOurScore: number | null = null;
+      let penaltyTheirScore: number | null = null;
       let played = false;
       let result: Match['result'] = null;
 
       if (forfeit) {
         if (ourValue !== '' && theirValue !== '') {
           fail('試合', line, '「不戦勝」「不戦敗」を入力する場合、もう一方の得点欄は空欄にしてください');
+        }
+        if (extraOurValue || extraTheirValue || penaltyOurValue || penaltyTheirValue) {
+          fail('試合', line, '不戦勝・不戦敗の試合には延長・PKの得点を入力しないでください');
         }
         ourScore = ourValue === forfeit ? forfeit : null;
         theirScore = theirValue === forfeit ? forfeit : null;
@@ -91,11 +106,76 @@ export function loadMatches(): Match[] {
         if ((our !== null && Number.isNaN(our)) || (their !== null && Number.isNaN(their))) {
           fail('試合', line, '得点は数字、または「不戦勝」「不戦敗」で入力してください');
         }
+        if ((our !== null && our < 0) || (their !== null && their < 0)) {
+          fail('試合', line, '得点は0以上の数字で入力してください');
+        }
+        if ((our !== null && !Number.isInteger(our)) || (their !== null && !Number.isInteger(their))) {
+          fail('試合', line, '得点は0以上の整数で入力してください');
+        }
         ourScore = our;
         theirScore = their;
         if (our !== null && their !== null) {
           played = true;
-          result = our > their ? 'win' : our < their ? 'lose' : 'draw';
+
+          const parseOptionalPair = (
+            ourValue: string,
+            theirValue: string,
+            label: '延長後得点' | 'PK得点',
+          ) => {
+            if (ourValue === '' && theirValue === '') return [null, null] as const;
+            if (ourValue === '' || theirValue === '') {
+              fail('試合', line, `${label}は自チーム・相手の両方を入力してください`);
+            }
+            const pairOur = Number(ourValue);
+            const pairTheir = Number(theirValue);
+            if (!Number.isInteger(pairOur) || !Number.isInteger(pairTheir) || pairOur < 0 || pairTheir < 0) {
+              fail('試合', line, `${label}は0以上の整数で入力してください`);
+            }
+            return [pairOur, pairTheir] as const;
+          };
+
+          [extraTimeOurScore, extraTimeTheirScore] = parseOptionalPair(
+            extraOurValue,
+            extraTheirValue,
+            '延長後得点',
+          );
+          [penaltyOurScore, penaltyTheirScore] = parseOptionalPair(
+            penaltyOurValue,
+            penaltyTheirValue,
+            'PK得点',
+          );
+
+          if (
+            extraTimeOurScore !== null &&
+            extraTimeOurScore === extraTimeTheirScore &&
+            penaltyOurScore === null
+          ) {
+            fail('試合', line, '延長後得点が同点です。延長後も同点の場合はPK得点を入力してください');
+          }
+          if (penaltyOurScore !== null && penaltyOurScore === penaltyTheirScore) {
+            fail('試合', line, 'PK得点が同点です。勝敗が決まる得点を入力してください');
+          }
+          if (penaltyOurScore !== null && our !== their) {
+            fail('試合', line, 'PK戦がある場合、90分の得点は同点にしてください');
+          }
+          if (
+            penaltyOurScore !== null &&
+            extraTimeOurScore !== null &&
+            extraTimeOurScore !== extraTimeTheirScore
+          ) {
+            fail('試合', line, 'PK戦がある場合、延長後の得点も同点にしてください');
+          }
+          if (extraTimeOurScore !== null && penaltyOurScore === null && our !== their) {
+            fail('試合', line, '延長戦が決着をつけた場合は、90分の得点は同点にしてください');
+          }
+
+          if (penaltyOurScore !== null) {
+            result = penaltyOurScore > penaltyTheirScore ? 'win' : 'lose';
+          } else if (extraTimeOurScore !== null) {
+            result = extraTimeOurScore > extraTimeTheirScore ? 'win' : 'lose';
+          } else {
+            result = our > their ? 'win' : our < their ? 'lose' : 'draw';
+          }
         }
       }
       return {
@@ -105,6 +185,10 @@ export function loadMatches(): Match[] {
         competition: r['大会名'] ?? '',
         ourScore,
         theirScore,
+        extraTimeOurScore,
+        extraTimeTheirScore,
+        penaltyOurScore,
+        penaltyTheirScore,
         note: r['メモ'] ?? '',
         played,
         result,

@@ -250,6 +250,7 @@ a { color: inherit; }
 .match .meta { font-size: .8rem; color: var(--muted); }
 .match .score { font-family: var(--font-head); font-size: 1.6rem; color: var(--navy); text-align: right; }
 .match .score small { display: block; font-size: .75rem; letter-spacing: .1em; }
+.match .score .score-detail { margin-top: 3px; color: var(--muted); letter-spacing: 0; }
 .badge { font-size: .7rem; background: var(--yellow); color: var(--navy-deep); padding: 1px 8px; border-radius: 999px; font-weight: 700; margin-right: 6px; }
 @media (max-width: 560px) {
   .match { grid-template-columns: 1fr auto; }
